@@ -7,9 +7,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class StudentService {
 
-    private boolean isAdult;
-    public StudentResponse createStudent(StudentRequest request) {
+    public StudentService() {
+       // System.out.println("StudentService object created");
+        System.out.println("StudentService object created: " + this);
+    }
 
+    public StudentResponse createStudent(StudentRequest request) {
+        boolean isAdult;
         if(request.getAge() > 28){
                 isAdult = true;
         }
