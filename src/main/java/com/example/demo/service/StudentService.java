@@ -1,30 +1,95 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.StudentEntity;
+import com.example.demo.exception.StudentNotFoundExceptioN;
 import com.example.demo.model.StudentRequest;
 import com.example.demo.model.StudentResponse;
+import com.example.demo.repository.StudentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
+
 
 @Service
 public class StudentService {
 
-    public StudentService() {
+  /*  public StudentService() {
        // System.out.println("StudentService object created");
         System.out.println("StudentService object created: " + this);
+    }*/
+
+    private final StudentRepository studentRepository;
+
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+        System.out.println("Student Service object created");
+
     }
 
     public StudentResponse createStudent(StudentRequest request) {
-        boolean isAdult;
-        if(request.getAge() > 28){
-                isAdult = true;
-        }
-        else
-        {
-            isAdult = false;
-        }
-        return new StudentResponse(
+
+
+        StudentEntity student = new StudentEntity(
                 request.getName(),
-                request.getAge(),
-                isAdult
+                request.getAge()
         );
+
+
+        StudentEntity savedStudent = studentRepository.save(student);
+
+        boolean adult = savedStudent.getAge() >= 18;
+
+        return new StudentResponse(
+                savedStudent.getName(),
+                savedStudent.getAge(),
+                adult
+        );
+    }
+
+    public List<StudentEntity> getStudents() {
+        return studentRepository.findAll();
+    }
+
+    public StudentEntity getStudentById(Long id) {
+        return studentRepository.findById(id) .orElseThrow(() ->
+                new StudentNotFoundExceptioN("Student not found with id: " + id)
+        );
+    }
+
+    public StudentResponse updateStudent(Long id, StudentRequest request) {
+
+        StudentEntity student = studentRepository.findById(id)
+                .orElseThrow(() ->
+                        new StudentNotFoundExceptioN(
+                                "Student not found with id: " + id
+                        )
+                );
+
+        student.setName(request.getName());
+        student.setAge(request.getAge());
+
+        StudentEntity updatedStudent = studentRepository.save(student);
+
+        boolean adult = updatedStudent.getAge() >= 18;
+
+        return new StudentResponse(
+                updatedStudent.getName(),
+                updatedStudent.getAge(),
+                adult
+        );
+    }
+
+    public void deleteStudent(Long id) {
+
+        StudentEntity student = studentRepository.findById(id)
+                .orElseThrow(() ->
+                        new StudentNotFoundExceptioN(
+                                "Student not found with id: " + id
+                        )
+                );
+
+        studentRepository.delete(student);
     }
 }

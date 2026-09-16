@@ -1,6 +1,7 @@
 package com.example.demo.exception;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,5 +39,14 @@ public class GlobalExceptionHandler       {
         return ResponseEntity
                 .badRequest()
                 .body(errors);
+    }
+
+    @ExceptionHandler(StudentNotFoundExceptioN.class)
+    public ResponseEntity<String> handleStudentNotFound(
+            StudentNotFoundExceptioN ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
     }
 }
