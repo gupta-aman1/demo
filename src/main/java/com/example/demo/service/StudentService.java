@@ -41,21 +41,45 @@ public class StudentService {
 
         boolean adult = savedStudent.getAge() >= 18;
 
-        return new StudentResponse(
-                savedStudent.getName(),
-                savedStudent.getAge(),
-                adult
-        );
+//        return new StudentResponse(
+//                savedStudent.getName(),
+//                savedStudent.getAge(),
+//                adult
+//        );
+        return toResponse(savedStudent);
     }
 
-    public List<StudentEntity> getStudents() {
-        return studentRepository.findAll();
+    public List<StudentResponse> getStudents() {
+        List<StudentEntity> students = studentRepository.findAll();
+       /* return students.stream()
+                .map(student -> new StudentResponse(
+                        student.getName(),
+                        student.getAge(),
+                        student.getAge() >= 25
+                ))
+                .toList();*/
+
+        return students.stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    public StudentEntity getStudentById(Long id) {
-        return studentRepository.findById(id) .orElseThrow(() ->
-                new StudentNotFoundExceptioN("Student not found with id: " + id)
-        );
+    public StudentResponse getStudentById(Long id) {
+
+        StudentEntity student = studentRepository.findById(id)
+                .orElseThrow(() ->
+                        new StudentNotFoundExceptioN(
+                                "Student not found with id: " + id
+                        )
+                );
+
+       /* return new StudentResponse(
+                student.getName(),
+                student.getAge(),
+                student.getAge() >= 18
+        );*/
+
+        return toResponse(student);
     }
 
     public StudentResponse updateStudent(Long id, StudentRequest request) {
@@ -74,11 +98,13 @@ public class StudentService {
 
         boolean adult = updatedStudent.getAge() >= 18;
 
-        return new StudentResponse(
-                updatedStudent.getName(),
-                updatedStudent.getAge(),
-                adult
-        );
+//        return new StudentResponse(
+//                updatedStudent.getName(),
+//                updatedStudent.getAge(),
+//                adult
+//        );
+
+        return toResponse(updatedStudent);
     }
 
     public void deleteStudent(Long id) {
@@ -91,5 +117,15 @@ public class StudentService {
                 );
 
         studentRepository.delete(student);
+    }
+
+
+    private StudentResponse toResponse(StudentEntity student) {
+
+        return new StudentResponse(
+                student.getName(),
+                student.getAge(),
+                student.getAge() >= 18
+        );
     }
 }

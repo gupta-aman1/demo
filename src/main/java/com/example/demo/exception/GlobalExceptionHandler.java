@@ -20,7 +20,7 @@ public class GlobalExceptionHandler       {
         return "Validation failed";
     }*/
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+   /* @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String,String>> handleValidationException(
             MethodArgumentNotValidException exception
     ) {
@@ -38,6 +38,26 @@ public class GlobalExceptionHandler       {
 
         return ResponseEntity
                 .badRequest()
+                .body(errors);
+    }*/
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationErrors(
+            MethodArgumentNotValidException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult()
+                .getFieldErrors()
+                .forEach(error ->
+                        errors.put(
+                                error.getField(),
+                                error.getDefaultMessage()
+                        )
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(errors);
     }
 

@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 
 public class StudentRequest {
 
-    @NotBlank
+    @NotBlank(message = "Name is required")
     private String name;
-    @Min(1)
+    @Min(value = 1,message ="Age must be at least 1")
     private int age;
 
     public String getName() {
