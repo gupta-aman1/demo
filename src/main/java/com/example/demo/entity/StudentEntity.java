@@ -12,6 +12,10 @@ public class StudentEntity {
     private String name;
     private int age;
 
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private CourseEntity course;
+
     public String getName() {
         return name;
     }
@@ -42,5 +46,13 @@ public class StudentEntity {
     public StudentEntity(String name, int age) {
         this.name = name;
         this.age = age;
+    }
+
+    public CourseEntity getCourse() {
+        return course;
+    }
+
+    public void setCourse(CourseEntity course) {
+        this.course = course;
     }
 }

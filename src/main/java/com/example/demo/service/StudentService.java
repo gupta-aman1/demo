@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.CourseEntity;
 import com.example.demo.entity.StudentEntity;
 import com.example.demo.exception.StudentNotFoundExceptioN;
 import com.example.demo.model.StudentRequest;
 import com.example.demo.model.StudentResponse;
+import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +23,11 @@ public class StudentService {
     }*/
 
     private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository,CourseRepository courseRepository) {
         this.studentRepository = studentRepository;
+        this.courseRepository = courseRepository;
         System.out.println("Student Service object created");
 
     }
@@ -36,10 +40,16 @@ public class StudentService {
                 request.getAge()
         );
 
+        CourseEntity course = courseRepository.findById(request.getCourseId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Course not found with id: " + request.getCourseId()
+                ));
+
+        student.setCourse(course);
 
         StudentEntity savedStudent = studentRepository.save(student);
 
-        boolean adult = savedStudent.getAge() >= 18;
+  //      boolean adult = savedStudent.getAge() >= 18;
 
 //        return new StudentResponse(
 //                savedStudent.getName(),
@@ -73,7 +83,7 @@ public class StudentService {
                         )
                 );
 
-       /* return new StudentResponse(
+       /*return new StudentResponse(
                 student.getName(),
                 student.getAge(),
                 student.getAge() >= 18
@@ -96,7 +106,7 @@ public class StudentService {
 
         StudentEntity updatedStudent = studentRepository.save(student);
 
-        boolean adult = updatedStudent.getAge() >= 18;
+//        boolean adult = updatedStudent.getAge() >= 18;
 
 //        return new StudentResponse(
 //                updatedStudent.getName(),

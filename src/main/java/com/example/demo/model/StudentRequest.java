@@ -10,6 +10,8 @@ public class StudentRequest {
     @Min(value = 1,message ="Age must be at least 1")
     private int age;
 
+    private Long courseId;
+
     public String getName() {
         return name;
     }
@@ -24,5 +26,13 @@ public class StudentRequest {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 }
