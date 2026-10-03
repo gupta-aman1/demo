@@ -19,7 +19,6 @@ public class CourseEntity {
     @OneToMany(mappedBy = "course")
     private List<StudentEntity> students = new ArrayList<>();
 
-
     public Long getId() {
         return id;
     }
