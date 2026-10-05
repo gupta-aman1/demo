@@ -6,6 +6,7 @@ import com.example.demo.model.StudentRequest;
 import com.example.demo.model.StudentResponse;
 import com.example.demo.service.StudentService;
 import jakarta.validation.Valid;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,5 +63,24 @@ public class StudentController {
     public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<@NonNull List<StudentResponse>> getStudentsByName(
+            @RequestParam String name) {
+
+        return ResponseEntity.ok(
+                studentService.getStudentsByName(name)
+        );
+    }
+
+    @GetMapping("/search/older-than")
+    public ResponseEntity<List<StudentResponse>> getStudentsOlderThan(
+            @RequestParam int age) {
+
+        return ResponseEntity.ok(
+                studentService.getStudentsOlderThan(age)
+        );
     }
 }

@@ -128,7 +128,25 @@ public class StudentService {
 
         studentRepository.delete(student);
     }
+    public List<StudentResponse> getStudentsByName(String name) {
 
+        List<StudentEntity> students =
+                studentRepository.findByName(name);
+
+        return students.stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<StudentResponse> getStudentsOlderThan(int age) {
+
+        List<StudentEntity> students =
+                studentRepository.findByAgeGreaterThan(age);
+
+        return students.stream()
+                .map(this::toResponse)
+                .toList();
+    }
 
     private StudentResponse toResponse(StudentEntity student) {
 
