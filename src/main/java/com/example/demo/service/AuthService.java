@@ -1,20 +1,16 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.RegisterRequest;
-import com.example.demo.dto.RegisterResponse;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.RefreshTokenRotationResult;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.LoginResponse;
 import com.example.demo.security.JwtService;
-import com.example.demo.security.RefreshTokenService;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -80,10 +76,8 @@ public class AuthService {
                         "Invalid mobile number or password"
                 ));
 
-        if (!passwordEncoder.matches(
-                request.password(),
-                user.getPassword()
-        )) {
+        if (!passwordEncoder.matches(request.password(), user.getPassword()))
+        {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "Invalid mobile number or password"
@@ -104,6 +98,25 @@ public class AuthService {
         return new LoginResponse(
                 accessToken,
                 refreshToken,
+                "Bearer"
+        );
+    }
+
+
+    @Transactional
+    public LoginResponse refresh(RefreshTokenRequest request) {
+
+        RefreshTokenRotationResult result =
+                refreshTokenService.rotateRefreshToken(
+                        request.refreshToken()
+                );
+
+        String accessToken =
+                jwtService.generateAccessToken(result.user());
+
+        return new LoginResponse(
+                accessToken,
+                result.rawRefreshToken(),
                 "Bearer"
         );
     }

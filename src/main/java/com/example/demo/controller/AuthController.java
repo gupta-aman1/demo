@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.LoginResponse;
-import com.example.demo.dto.RegisterRequest;
-import com.example.demo.dto.RegisterResponse;
+import com.example.demo.dto.*;
 import com.example.demo.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -52,5 +49,12 @@ public class AuthController {
                 "mobile", jwt.getSubject(),
                 "userId", jwt.getClaim("userId")
         );
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponse> refresh(
+            @Valid @RequestBody RefreshTokenRequest request) {
+
+        return ResponseEntity.ok(authService.refresh(request));
     }
 }
