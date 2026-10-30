@@ -14,7 +14,21 @@ public interface RefreshTokenRepository
 
     Optional<RefreshToken> findByTokenHash(String tokenHash);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+   /* @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT t FROM RefreshToken t WHERE t.tokenHash = :tokenHash")
-    Optional<RefreshToken> findByTokenHashForUpdate(@Param("tokenHash") String tokenHash);
+    Optional<RefreshToken> findByTokenHashForUpdate(@Param("tokenHash") String tokenHash);*/
+
+
+    @Query(
+            value = """
+        SELECT *
+        FROM refresh_tokens
+        WHERE token_hash = :tokenHash
+        FOR UPDATE
+        """,
+            nativeQuery = true
+    )
+    Optional<RefreshToken> findByTokenHashForUpdate(
+            @Param("tokenHash") String tokenHash
+    );
 }

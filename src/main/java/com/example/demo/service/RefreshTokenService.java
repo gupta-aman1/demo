@@ -51,11 +51,22 @@ public class RefreshTokenService {
     public RefreshTokenRotationResult rotateRefreshToken(
             String rawRefreshToken) {
 
+        System.out.println("STEP 1: Refresh token received");
+
         String tokenHash = hashToken(rawRefreshToken);
+
+        System.out.println("STEP 2: Token hash generated");
 
         RefreshToken oldToken = refreshTokenRepository
                 .findByTokenHashForUpdate(tokenHash)
                 .orElseThrow(this::invalidRefreshToken);
+
+        System.out.println("STEP 3: Token found in database");
+
+        System.out.println("STEP 4: Revoked = " + oldToken.isRevoked());
+        System.out.println("STEP 5: Expiry = " + oldToken.getExpiresAt());
+        System.out.println("STEP 6: User enabled = " + oldToken.getUser().isEnabled());
+
 
         if (oldToken.isRevoked()
                 || !oldToken.getExpiresAt().isAfter(Instant.now())
