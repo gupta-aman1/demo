@@ -120,4 +120,12 @@ public class AuthService {
                 "Bearer"
         );
     }
+
+    @Transactional
+    public void logout(RefreshTokenRequest request) {
+
+        refreshTokenService.revokeRefreshToken(
+                request.refreshToken()
+        );
+    }
 }

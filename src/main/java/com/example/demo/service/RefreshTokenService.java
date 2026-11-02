@@ -128,4 +128,23 @@ public class RefreshTokenService {
                 "Invalid or expired refresh token"
         );
     }
+
+    @Transactional
+    public void revokeRefreshToken(String rawRefreshToken) {
+
+        String tokenHash = hashToken(rawRefreshToken);
+
+        RefreshToken token = refreshTokenRepository
+                .findByTokenHashForUpdate(tokenHash)
+                .orElseThrow(this::invalidRefreshToken);
+
+        if (token.isRevoked()
+                || !token.getExpiresAt().isAfter(Instant.now())) {
+            throw invalidRefreshToken();
+        }
+
+        token.setRevoked(true);
+
+        refreshTokenRepository.save(token);
+    }
 }
